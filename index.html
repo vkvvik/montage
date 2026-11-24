@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Монтаж</title>
+<meta name="description" content="Превращаю эфиры и видео экспертов в короткие рилсы: субтитры, цепляющее начало, звуки и динамика. Первый ролик бесплатно.">
+<meta property="og:title" content="Егор Волков — монтаж рилсов для экспертов">
+<meta property="og:description" content="Превращаю ваши эфиры в рилсы, которые досматривают до конца. Первый ролик бесплатно.">
+<meta property="og:image" content="videos/reel3.jpg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0d0d0f; --card:#17171b; --line:#26262c;
+    --text:#f2f2f4; --muted:#9a9aa3; --accent:#ffd23f;
+    --radius:20px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
+  a{color:inherit}
+  .wrap{max-width:1080px;margin:0 auto;padding:0 22px}
+  h1,h2,h3{font-family:Manrope,Inter,sans-serif;line-height:1.12;letter-spacing:-.02em}
+  .accent{color:var(--accent)}
+
+  /* nav */
+  nav{position:sticky;top:0;z-index:10;background:rgba(13,13,15,.8);backdrop-filter:blur(12px);border-bottom:1px solid var(--line)}
+  nav .wrap{display:flex;align-items:center;justify-content:space-between;height:60px}
+  .logo{font-family:Manrope,sans-serif;font-weight:800;font-size:17px;text-decoration:none}
+  .logo span{color:var(--accent)}
+  .btn{display:inline-flex;align-items:center;gap:8px;background:var(--accent);color:#111;font-weight:600;text-decoration:none;padding:14px 24px;border-radius:999px;transition:transform .15s,box-shadow .15s;border:0;cursor:pointer;font-size:15px}
+  .btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,210,63,.25)}
+  .btn.small{padding:9px 16px;font-size:14px}
+  .btn.ghost{background:transparent;color:var(--text);border:1px solid var(--line)}
+  .btn.ghost:hover{box-shadow:none;border-color:var(--muted)}
+
+  /* hero */
+  .hero{padding:90px 0 70px}
+  .tag{display:inline-block;font-size:13px;color:var(--muted);border:1px solid var(--line);padding:6px 14px;border-radius:999px;margin-bottom:24px}
+  .hero h1{font-size:clamp(30px,4.4vw,50px);font-weight:800;max-width:760px}
+  .hero p{color:var(--muted);font-size:clamp(16px,2vw,19px);max-width:600px;margin:22px 0 34px}
+  .hero .actions{display:flex;gap:12px;flex-wrap:wrap}
+
+  section{padding:70px 0}
+  .head{margin-bottom:36px}
+  .head h2{font-size:clamp(26px,4vw,40px)}
+  .head p{color:var(--muted);margin-top:10px;max-width:560px}
+
+  /* works */
+  .reels{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+  .reel{position:relative;border-radius:var(--radius);overflow:hidden;background:var(--card);aspect-ratio:9/16;cursor:pointer;border:1px solid var(--line)}
+  .reel video{width:100%;height:100%;object-fit:cover;display:block}
+  .reel .play{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;transition:opacity .2s}
+  .reel .play i{width:64px;height:64px;border-radius:50%;background:rgba(255,255,255,.18);backdrop-filter:blur(6px);display:flex;align-items:center;justify-content:center}
+  .reel .play i::after{content:"";border-left:18px solid #fff;border-top:11px solid transparent;border-bottom:11px solid transparent;margin-left:5px}
+  .reel.playing .play{opacity:0;pointer-events:none}
+  .reel{cursor:default}
+  .reel .play{cursor:pointer}
+  .reel .cap{pointer-events:none}
+  .reel .cap{position:absolute;left:16px;right:16px;bottom:16px;font-size:14px;font-weight:600;transition:opacity .2s}
+  .reel .cap small{display:block;font-weight:400;color:#d4d4da;font-size:12.5px;margin-top:2px}
+  .reel.playing .cap{opacity:0}
+
+
+  /* player bar */
+  .reel:not(.started) .bar{display:none}
+  .reel.started .cap{opacity:0}
+  .bar{position:absolute;left:0;right:0;bottom:0;padding:22px 12px 10px;background:linear-gradient(to top,rgba(0,0,0,.75),transparent);display:flex;flex-direction:column;gap:6px;z-index:3}
+  .bar .row{display:flex;align-items:center;gap:8px}
+  .bar button{background:none;border:0;color:#fff;cursor:pointer;width:30px;height:30px;display:flex;align-items:center;justify-content:center;border-radius:8px;flex:none}
+  .bar button:hover{background:rgba(255,255,255,.15)}
+  .bar svg{width:18px;height:18px;fill:#fff}
+  .bar .time{white-space:nowrap;font-size:12px;color:#ddd;font-variant-numeric:tabular-nums;margin-right:auto}
+  .bar input[type=range]{-webkit-appearance:none;appearance:none;background:transparent;cursor:pointer;height:16px}
+  .bar input[type=range]::-webkit-slider-runnable-track{height:4px;border-radius:4px;background:linear-gradient(to right,var(--accent) var(--p,0%),rgba(255,255,255,.3) var(--p,0%))}
+  .bar input[type=range]::-moz-range-track{height:4px;border-radius:4px;background:linear-gradient(to right,var(--accent) var(--p,0%),rgba(255,255,255,.3) var(--p,0%))}
+  .bar input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:12px;height:12px;border-radius:50%;background:#fff;margin-top:-4px}
+  .bar input[type=range]::-moz-range-thumb{width:12px;height:12px;border:0;border-radius:50%;background:#fff}
+  .bar .seek{width:100%}
+  .bar .vol{width:60px}
+
+  /* services */
+  .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:26px}
+  .card .ico{font-size:26px;margin-bottom:14px}
+  .card h3{font-size:17px;margin-bottom:8px}
+  .card p{color:var(--muted);font-size:15px}
+
+  /* steps */
+  .steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;counter-reset:s}
+  .step{padding:26px;border-radius:var(--radius);border:1px solid var(--line);position:relative}
+  .step::before{counter-increment:s;content:"0" counter(s);font-family:Manrope,sans-serif;font-size:34px;font-weight:700;color:var(--accent);display:block;margin-bottom:12px}
+  .step h3{font-size:17px;margin-bottom:6px}
+  .step p{color:var(--muted);font-size:15px}
+
+  /* cta */
+  .cta{background:var(--accent);color:#111;border-radius:28px;padding:56px 40px;text-align:center}
+  .cta h2{font-size:clamp(26px,4vw,42px);margin-bottom:14px}
+  .cta p{max-width:560px;margin:0 auto 30px;font-size:17px;color:#2b2b2b}
+  .contacts{display:flex;gap:12px;justify-content:center;flex-wrap:wrap}
+  .contacts a{background:#111;color:#fff;text-decoration:none;padding:14px 24px;border-radius:999px;font-weight:600;transition:transform .15s}
+  .contacts a:hover{transform:translateY(-2px)}
+
+  footer{padding:40px 0 50px;color:var(--muted);font-size:14px;text-align:center}
+
+  /* tablet: 3 columns, tighter gaps */
+  @media (max-width:1024px){
+    .reels{gap:14px}
+    .bar .vol{display:none}
+    .bar .time{font-size:11px}
+  }
+  /* phone: vertical feed, one reel per screen */
+  @media (max-width:640px){
+    .wrap{padding:0 16px}
+    section{padding:16px 0 24px}
+    .reels{grid-template-columns:1fr;gap:18px;justify-items:center}
+    .reel{width:min(100%, calc((100svh - 100px) * 9 / 16));border-radius:22px}
+    footer{padding:20px 0 32px}
+  }
+
+
+  .more{display:flex;align-items:center;justify-content:center;gap:10px;margin-top:28px;color:var(--muted);font-size:14px;text-align:center}
+  .more .dot{width:8px;height:8px;border-radius:50%;background:var(--accent);flex:none;animation:pulse 1.8s infinite}
+  @keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,210,63,.6)}70%{box-shadow:0 0 0 10px rgba(255,210,63,0)}100%{box-shadow:0 0 0 0 rgba(255,210,63,0)}}
+  /* modal */
+  .modal{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(10,10,12,.35);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);opacity:0;visibility:hidden;transition:opacity .25s,visibility .25s}
+  .modal.open{opacity:1;visibility:visible}
+  .modal .cta{position:relative;max-width:720px;width:100%;transform:scale(.94) translateY(10px);transition:transform .25s;box-shadow:0 30px 80px rgba(0,0,0,.5)}
+  .modal.open .cta{transform:none}
+  .modal .cta{background:rgba(18,18,22,.6);color:var(--text);border:1px solid rgba(255,255,255,.16);box-shadow:0 30px 80px rgba(0,0,0,.45)}
+  .modal .cta h2{color:var(--accent)}
+  .modal .cta p{color:#c9c9d1}
+  .modal .contacts a{background:rgba(255,255,255,.1);color:#fff;border:1px solid rgba(255,255,255,.18);transition:background .15s,transform .15s}
+  .modal .contacts a:hover{background:rgba(255,255,255,.2)}
+  .modal .close{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;border:0;background:rgba(255,255,255,.1);color:#fff;font-size:22px;line-height:1;cursor:pointer}
+  .modal .close:hover{background:rgba(255,255,255,.2)}
+  body.lock{overflow:hidden}
+  @media (max-width:640px){
+    .modal .cta{padding:36px 22px;border-radius:24px}
+    .modal .cta h2{font-size:26px}
+    .modal .cta p{font-size:15px;margin-bottom:24px}
+    .modal .contacts{flex-direction:column;gap:10px}
+    .modal .contacts a{width:100%;text-align:center;padding:15px}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <a href="#" class="logo">монтаж<span>.</span></a>
+    <button type="button" class="btn small" id="openModal">Написать</button>
+  </div>
+</nav>
+
+<section id="works">
+  <div class="wrap">
+    <div class="reels" id="reels"></div>
+      <p class="more"><span class="dot"></span>Портфолио пополняется — новые работы появляются здесь регулярно</p>
+  </div>
+</section>
+
+<div class="modal" id="modal" aria-hidden="true">
+  <div class="cta" role="dialog" aria-modal="true">
+    <h2>Первый ролик — бесплатно</h2>
+    <p>Пришлите один ваш эфир или видео. Я сделаю из него рилс, а вы решите, хотите ли работать дальше.</p>
+    <div class="contacts">
+      <a href="https://t.me/poylip" target="_blank" rel="noopener">Telegram</a>
+      <a href="https://wa.me/77019450610" target="_blank" rel="noopener">WhatsApp</a>
+      <a href="https://instagram.com/vkvvik" target="_blank" rel="noopener">Instagram</a>
+    </div>
+  </div>
+</div>
+
+<footer>© Монтаж</footer>
+
+<template id="reelTpl">
+  <div class="reel">
+    <video preload="none" playsinline></video>
+    <div class="play"><i></i></div>
+    <div class="bar">
+          <input class="seek" type="range" min="0" max="1000" value="0" aria-label="Перемотка">
+          <div class="row">
+            <button class="pp" aria-label="Пуск/пауза"></button>
+            <span class="time">0:00 / 0:00</span>
+            <button class="mute" aria-label="Звук"></button>
+            <input class="vol" type="range" min="0" max="100" value="100" aria-label="Громкость">
+            <button class="fs" aria-label="Полный экран"><svg viewBox="0 0 24 24"><path d="M4 4h6v2H6v4H4V4zm10 0h6v6h-2V6h-4V4zM4 14h2v4h4v2H4v-6zm14 0h2v6h-6v-2h4v-4z"/></svg></button>
+          </div>
+        </div>
+  </div>
+</template>
+
+<script>
+  /* ===== СПИСОК РОЛИКОВ =====
+     Чтобы добавить ролик: положи mp4 (и обложку jpg) в папку videos
+     и добавь строку сюда. Порядок здесь = порядок на сайте. */
+  const VIDEOS = [
+    { src: 'videos/reel3.mp4', poster: 'videos/reel3.jpg' },
+    { src: 'videos/reel2.mp4', poster: 'videos/reel2.jpg' },
+    { src: 'videos/reel1.mp4', poster: 'videos/reel1.jpg' },
+  ];
+
+  const tplEl = document.getElementById('reelTpl');
+  const box = document.getElementById('reels');
+  VIDEOS.forEach(x => {
+    const node = tplEl.content.cloneNode(true);
+    const v = node.querySelector('video');
+    v.src = x.src; if (x.poster) v.poster = x.poster;
+    box.appendChild(node);
+  });
+
+  const ICON = {
+    play:'<svg viewBox="0 0 24 24"><path d="M7 4.5v15l13-7.5z"/></svg>',
+    pause:'<svg viewBox="0 0 24 24"><path d="M6 4h4v16H6zm8 0h4v16h-4z"/></svg>',
+    vol:'<svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3A4.5 4.5 0 0 0 14 8v8a4.5 4.5 0 0 0 2.5-4zM14 3.2v2.1a7 7 0 0 1 0 13.4v2.1a9 9 0 0 0 0-17.6z"/></svg>',
+    mute:'<svg viewBox="0 0 24 24"><path d="M3 9v6h4l5 5V4L7 9H3zm18.7 1.3-1.4-1.4L18 11.2l-2.3-2.3-1.4 1.4 2.3 2.3-2.3 2.3 1.4 1.4 2.3-2.3 2.3 2.3 1.4-1.4-2.3-2.3z"/></svg>'
+  };
+  const fmt = t => { t = Math.floor(t || 0); return Math.floor(t/60) + ':' + String(t%60).padStart(2,'0'); };
+  const fill = (el, pct) => el.style.setProperty('--p', pct + '%');
+  const all = [...document.querySelectorAll('.reel video')];
+
+  document.querySelectorAll('.reel').forEach(r => {
+    const v = r.querySelector('video');
+    const pp = r.querySelector('.pp'), seek = r.querySelector('.seek'), time = r.querySelector('.time');
+    const mute = r.querySelector('.mute'), vol = r.querySelector('.vol'), fs = r.querySelector('.fs');
+    let seeking = false;
+
+    pp.innerHTML = ICON.play; mute.innerHTML = ICON.vol; fill(vol, 100);
+
+    const toggle = () => v.paused ? v.play() : v.pause();
+    r.querySelector('.play').addEventListener('click', toggle);
+    v.addEventListener('click', toggle);
+    pp.addEventListener('click', toggle);
+
+    v.addEventListener('play', () => {
+      all.forEach(o => { if (o !== v) o.pause(); });
+      r.classList.add('playing','started'); pp.innerHTML = ICON.pause;
+    });
+    v.addEventListener('pause', () => { r.classList.remove('playing'); pp.innerHTML = ICON.play; });
+    v.addEventListener('ended', () => { v.currentTime = 0; });
+
+    const upd = () => {
+      if (!v.duration) return;
+      time.textContent = fmt(v.currentTime) + ' / ' + fmt(v.duration);
+      if (!seeking) { seek.value = v.currentTime / v.duration * 1000; fill(seek, v.currentTime / v.duration * 100); }
+    };
+    v.addEventListener('timeupdate', upd);
+    v.addEventListener('loadedmetadata', upd);
+
+    seek.addEventListener('input', () => {
+      seeking = true; fill(seek, seek.value / 10);
+      if (v.duration) { v.currentTime = seek.value / 1000 * v.duration; time.textContent = fmt(v.currentTime) + ' / ' + fmt(v.duration); }
+    });
+    seek.addEventListener('change', () => { seeking = false; });
+    seek.addEventListener('pointerdown', () => { if (v.preload === 'none') v.load(); });
+
+    const syncVol = () => {
+      const off = v.muted || v.volume === 0;
+      mute.innerHTML = off ? ICON.mute : ICON.vol;
+      const val = off ? 0 : Math.round(v.volume * 100);
+      vol.value = val; fill(vol, val);
+    };
+    vol.addEventListener('input', () => { v.volume = vol.value / 100; v.muted = vol.value == 0; syncVol(); });
+    mute.addEventListener('click', () => { v.muted = !v.muted; if (!v.muted && v.volume === 0) v.volume = 1; syncVol(); });
+
+    fs.addEventListener('click', () => {
+      if (document.fullscreenElement) document.exitFullscreen();
+      else if (v.requestFullscreen) v.requestFullscreen();
+      else if (v.webkitEnterFullscreen) v.webkitEnterFullscreen(); // iPhone
+    });
+
+    v.preload = 'metadata';
+  });
+
+  const modal = document.getElementById('modal');
+  const openM = () => { modal.classList.add('open'); document.body.classList.add('lock'); all.forEach(v => v.pause()); };
+  const closeM = () => { modal.classList.remove('open'); document.body.classList.remove('lock'); };
+  document.getElementById('openModal').addEventListener('click', openM);
+  modal.addEventListener('click', e => { if (e.target === modal) closeM(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closeM(); });
+</script>
+</body>
+</html>
