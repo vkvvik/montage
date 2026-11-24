@@ -17,7 +17,9 @@
     --text:#f2f2f4; --muted:#9a9aa3; --accent:#ffd23f;
     --radius:20px;
   }
-  *{box-sizing:border-box;margin:0;padding:0}
+  *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+  *:focus,*:focus-visible{outline:none}
+  button,input,video{outline:none}
   html{scroll-behavior:smooth}
   body{background:var(--bg);color:var(--text);font-family:Inter,system-ui,sans-serif;line-height:1.55;-webkit-font-smoothing:antialiased}
   a{color:inherit}
